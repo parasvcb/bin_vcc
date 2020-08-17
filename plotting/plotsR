@@ -1,0 +1,94 @@
+inpfile='foldxsumm.csv'
+df<-read.csv(inpfile)
+gg <- ggplot()
+gg <- gg + geom_boxplot(data=df, aes(x=domgroup,y=int_energy, color=type))
+gg <- gg + facet_wrap(~domgroup,nrow=2,scales = "free_x")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'foldxintenergy_box.pdf', gg, width = 10, height = 5)
+
+gg <- ggplot(data=df, aes(x=int_energy, color=type, ..scaled..), alpha=0.4)
+gg <- gg + geom_density()
+gg <- gg + facet_wrap(~domgroup,nrow=2,scales = "free_x")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'foldxintenergy_density.pdf', gg, width = 10, height = 5)
+
+
+inpfile='aligntotalpairs.csv'
+df<-read.csv(inpfile)
+gg <- ggplot()
+gg <- gg + geom_boxplot(data=df, aes(x=domgroup,y=rescount, color=type))
+gg <- gg + facet_wrap(~domgroup,nrow=2,scales = "free")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'interface_rescount_box.pdf', gg, width = 10, height = 5)
+
+gg <- ggplot(data=df, aes(x=rescount, color=type, ..scaled.. ), alpha=0.4)
+gg <- gg + geom_density(adjust=2)
+gg <- gg + facet_wrap(~domgroup,nrow=2,scales = "free")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'interface_rescount_density.pdf', gg, width = 10, height = 5)
+
+
+inpfile='alignreswise.csv'
+df<-read.csv(inpfile)
+gg <- ggplot(data=df, aes(x=resdet,y=frequency,fill=type), size=0.5,alpha=0.7)
+gg <- gg+geom_bar(stat='identity',position=position_dodge())
+gg <- gg + facet_wrap(~domgroup,scales='free')
+gg <- gg + labs(y="Freq", x="Residue")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'interface_resfreq_.pdf', gg, width = 10, height = 5)
+
+
+##### shortest paths medley
+# barchart for node degeneracy, side by side #jbc_shortestpaths_plot_node_distrib.tsv 
+# path lengths density + histograms #jbc_shortestpaths_plot_paths_distrib.tsv
+library(ggplot2)
+inpfile="jbc_shortestpaths_plot_node_distrib.tsv"
+dfraw<-read.csv(inpfile,sep='\t')
+df <- subset(dfraw, tag=='plot')
+gg <- ggplot(data=df, aes(x=node,y=nodefreq,fill=type), size=0.5,alpha=0.7)
+gg <- gg+geom_bar(stat='identity',position=position_dodge())
+gg <- gg + facet_wrap(~g_Src_Dest,scales='free_x',ncol=1)
+gg <- gg + labs(y="Freq", x="Residue")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 7, angle = 30), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'jbc_nodedegeneracy.pdf', gg, width = 10, height = 30)
+
+
+inpfile="jbc_shortestpaths_plot_paths_distrib.tsv"
+df<-read.csv(inpfile,sep='\t')
+library(plyr)
+#mu <- ddply(df, "type", summarise, grp.mean=mean(length))
+#md <- ddply(df, "type", summarise, grp.median=median(length))
+gg <- ggplot(data=df, aes(x=length, color=type,..scaled..), alpha=0.4)
+gg <- gg + geom_density()
+#gg <- gg+ geom_vline(data=mu, aes(xintercept=grp.mean, color=type),             linetype="dashed")
+#gg <- gg+ geom_vline(data=md, aes(xintercept=grp.median, color=type),             linetype="solid")
+#gg <- gg +geom_text(aes(label=paths), vjust=1.6, color="black", size=3.5)
+gg <- gg + facet_wrap(~g_Src_Dest)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = 'jbc_path_distrib.pdf', gg, width = 10, height = 5)
+
+library(ggplot2)
+inpfile="4.5_50_cij0.6_shortestpaths_plot_node_distrib.tsv"
+dfraw<-read.csv(inpfile,sep='\t')
+df <- subset(dfraw, tag=='plot')
+gg <- ggplot(data=df, aes(x=node,y=nodefreq,fill=type), size=0.5,alpha=0.7)
+gg <- gg+geom_bar(stat='identity',position=position_dodge())
+gg <- gg + facet_wrap(~g_Src_Dest,scales='free_x',ncol=1)
+gg <- gg + labs(y="Freq", x="Residue")
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 7, angle = 30), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = '4.5_50_cij0.6_nodedegeneracy.pdf', gg, width = 10, height = 30)
+
+
+inpfile="4.5_50_cij0.6_shortestpaths_plot_paths_distrib.tsv"
+df<-read.csv(inpfile,sep='\t')
+library(plyr)
+#mu <- ddply(df, "type", summarise, grp.mean=mean(length))
+#md <- ddply(df, "type", summarise, grp.median=median(length))
+gg <- ggplot(data=df, aes(x=length, color=type,..scaled..), alpha=0.4)
+gg <- gg + geom_density()
+#gg <- gg+ geom_vline(data=mu, aes(xintercept=grp.mean, color=type),             linetype="dashed")
+#gg <- gg+ geom_vline(data=md, aes(xintercept=grp.median, color=type),             linetype="solid")
+#gg <- gg +geom_text(aes(label=paths), vjust=1.6, color="black", size=3.5)
+gg <- gg + facet_wrap(~g_Src_Dest)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 8, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = '4.5_50_cij0.6_path_distrib.pdf', gg, width = 10, height = 5)

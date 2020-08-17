@@ -1,0 +1,52 @@
+library(bio3d)
+library(ggplot2)
+load("pc_CA.ob")
+df=pc$z[,0:3]
+colnames(df)<-c('PC1','PC2','PC3')
+dfd=as.data.frame(df)
+dfd$row=c(1:60001)
+dfd$group <- ifelse(dfd$row >= 2 & dfd$row <= 30001, 'WT',
+                  ifelse(dfd$row >=30002 & dfd$row <=60001, 'Y321A',
+                         ifelse(dfd$row == 1, '1xez', '3o44')))
+#dfd$row=c(1:10001)
+#dfd$group <- ifelse(dfd$row >= 2 & dfd$row <= 5001, 'WT',
+#                  ifelse(dfd$row >=5002 & dfd$row <=10001, 'Y321A',
+#                         ifelse(dfd$row == 1, '3o44', 'xez')))
+
+dfx = dfd[dfd$group == '1xez',]
+df = dfd[!dfd$group == '1xez',]
+
+#dfx = dfd[dfd$group == '3o44',]
+#df = dfd[!dfd$group == '3o44',]
+col= c("#D16103","#52854C", "#C4961A")
+gg <- ggplot(data=df)
+gg <- gg + geom_point(aes(x=PC1,y=PC2, color=group), alpha=0.2, size=1) + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + stat_density_2d(geom = "polygon", aes(x=PC1,y=PC2,alpha = ..level.., fill = group, colour=group))  + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + geom_point(data=dfx, aes(x=PC1,y=PC2), alpha=1, size=5)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 20, angle = 45), axis.title.x = element_text(size=20),axis.title.y = element_text(size=20), axis.text.y = element_text( hjust = 1, size = 20), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0("PC1vsPC2",".pdf"), gg, width = 7, height = 7)
+
+gg <- ggplot(data=df)
+gg <- gg + geom_point(aes(x=PC1,y=PC3, color=group), alpha=0.2, size=1) + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + stat_density_2d(geom = "polygon", aes(x=PC1,y=PC3,alpha = ..level.., fill = group, colour=group))  + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + geom_point(data=dfx, aes(x=PC1,y=PC3), alpha=1, size=5)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 20, angle = 45), axis.title.x = element_text(size=20),axis.title.y = element_text(size=20), axis.text.y = element_text( hjust = 1, size = 20), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=10)))
+ggsave(filename = paste0("PC1vsPC3",".pdf"), gg, width = 7, height = 7)
+
+gg <- ggplot(data=df)
+gg <- gg + geom_point(aes(x=PC3,y=PC2, color=group), alpha=0.2, size=1) + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + stat_density_2d(geom = "polygon", aes(x=PC3,y=PC2,alpha = ..level.., fill = group, colour=group))  + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + geom_point(data=dfx, aes(x=PC3,y=PC2), alpha=1, size=5)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 20, angle = 45), axis.title.x = element_text(size=20),axis.title.y = element_text(size=20), axis.text.y = element_text( hjust = 1, size = 20), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=5)))
+ggsave(filename = paste0("PC3vsPC2",".pdf"), gg, width = 7, height = 7)
+
+gg <- ggplot(data=df)
+gg <- gg + geom_point(aes(x=PC3,y=PC2, color=group), alpha=0.2, size=1) + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + stat_density_2d(geom = "polygon", aes(x=PC3,y=PC2,alpha = ..level.., fill = group, colour=group))  + scale_fill_manual(values = col) + scale_colour_manual(values=col)
+gg <- gg + geom_point(data=dfx, aes(x=PC3,y=PC2), alpha=1, size=5)
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 20, angle = 45), axis.title.x = element_text(size=20),axis.title.y = element_text(size=20), axis.text.y = element_text( hjust = 1, size = 20), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+#gg <- gg + guides(colour = guide_legend(override.aes = list(size=5)))
+ggsave(filename = paste0("PC3vsPC2_t",".pdf"), gg, width = 7, height = 7)

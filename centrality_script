@@ -1,0 +1,91 @@
+load('enswt/general/netob_CA/jbc2016approach_nonlocalcaca/consensusnet_opt_mod.ob')
+jbcwt=net
+
+load('ensy321a/general/netob_CA/jbc2016approach_nonlocalcaca/consensusnet_opt_mod.ob')
+jbcy321a=net
+
+load("enswt/general/netob_CA/cijcutt0.6_4.5ang50pcntframesnet_opt_mod.ob")
+wtnet4.5_0.6_50=net
+
+load("ensy321a/general/netob_CA/cijcutt0.6_4.5ang50pcntframesnet_opt_mod.ob")
+y321anet4.5_0.6_50=net
+
+load("enswt/general/netob_CA/cijcutt0.6_4.5ang75pcntframesnet_opt_mod.ob")
+wtnet4.5_0.6_75=net
+
+load("ensy321a/general/netob_CA/cijcutt0.6_4.5ang75pcntframesnet_opt_mod.ob")
+y321anet4.5_0.6_75=net
+
+load("enswt/general/netob_CA/4.5ang50pcntframesnet_opt_mod.ob")
+wtnet4.5_0.4_50=net
+
+load("ensy321a/general/netob_CA/4.5ang50pcntframesnet_opt_mod.ob")
+y321anet4.5_0.4_50=net
+
+betnet <- betweenness(jbcwt$network)
+dfjbcwt=as.data.frame(betnet,col.names="betweencent")
+dfjbcwt$norm=dfjbcwt$betnet/sum(dfjbcwt$betnet)
+dfjbcwt$group='jbcwt'
+
+betnet <- betweenness(jbcy321a$network)
+dfjbcy321a=as.data.frame(betnet,col.names="betweencent")
+dfjbcy321a$norm=dfjbcy321a$betnet/sum(dfjbcy321a$betnet)
+dfjbcy321a$group='jbcy321a'
+
+betnet <- betweenness(wtnet4.5_0.6_50$network)
+dfwtnet4.5_0.6_50=as.data.frame(betnet,col.names="betweencent")
+dfwtnet4.5_0.6_50$norm=dfwtnet4.5_0.6_50$betnet/sum(dfwtnet4.5_0.6_50$betnet)
+dfwtnet4.5_0.6_50$group='wtnet4.5_0.6_50'
+
+betnet <- betweenness(y321anet4.5_0.6_50$network)
+dfy321anet4.5_0.6_50=as.data.frame(betnet,col.names="betweencent")
+dfy321anet4.5_0.6_50$norm=dfy321anet4.5_0.6_50$betnet/sum(dfy321anet4.5_0.6_50$betnet)
+dfy321anet4.5_0.6_50$group='y321anet4.5_0.6_50'
+
+betnet <- betweenness(wtnet4.5_0.6_75$network)
+dfwtnet4.5_0.6_75=as.data.frame(betnet,col.names="betweencent")
+dfwtnet4.5_0.6_75$norm=dfwtnet4.5_0.6_75$betnet/sum(dfwtnet4.5_0.6_75$betnet)
+dfwtnet4.5_0.6_75$group='wtnet4.5_0.6_75'
+
+betnet <- betweenness(y321anet4.5_0.6_75$network)
+dfy321anet4.5_0.6_75=as.data.frame(betnet,col.names="betweencent")
+dfy321anet4.5_0.6_75$norm=dfy321anet4.5_0.6_75$betnet/sum(dfy321anet4.5_0.6_75$betnet)
+dfy321anet4.5_0.6_75$group='y321anet4.5_0.6_75'
+
+
+betnet <- betweenness(jbcwt$network)
+dfjbcwt=as.data.frame(betnet,col.names="betweencent")
+dfjbcwt$norm=dfjbcwt$betnet/sum(dfjbcwt$betnet)
+dfjbcwt$group='jbcwt'
+
+betnet <- betweenness(jbcy321a$network)
+dfjbcy321a=as.data.frame(betnet,col.names="betweencent")
+dfjbcy321a$norm=dfjbcy321a$betnet/sum(dfjbcy321a$betnet)
+dfjbcy321a$group='jbcy321a'
+
+
+betnet <- betweenness(jbcwt$network)
+dfjbcwt=as.data.frame(betnet,col.names="betweencent")
+dfjbcwt$norm=dfjbcwt$betnet/sum(dfjbcwt$betnet)
+dfjbcwt$group='jbcwt'
+
+betnet <- betweenness(jbcy321a$network)
+dfjbcy321a=as.data.frame(betnet,col.names="betweencent")
+dfjbcy321a$norm=dfjbcy321a$betnet/sum(dfjbcy321a$betnet)
+dfjbcy321a$group='jbcy321a'
+
+
+
+betnet <- betweenness(net$network)
+df=as.data.frame(betnet,col.names="betweencent")
+df$norm=df$betnet/sum(df$betnet)
+jpeg("test1.jpeg")
+plot.bio3d(df$normnet,resno=pdb,sse=stride(pdb,exefile='stride',resno=TRUE), xlab="Residue No", ylab="Centrality", type="l",col=2)
+lines(dfmean$norm, typ="l", col=2)
+legend("topright",
+       c("max", "mean"),
+       col=c(4,2))
+dev.off()
+
+
+MyData[which(MyData[,2]>40),]
