@@ -1,0 +1,10 @@
+9 sep 2020 wednesday 9:15 am from bean bag 
+forgot entirely the chukcs and what they mean
+
+iam creating a folder having jbs approach and modules 
+that will have list of trajectroies
+accessory modules as RMSD*3, RMSF combined (latter compare that iwth Y321A and with WT)
+calculation of CIJ and then PCA (optional and hence skip it)
+compute the contacts
+from CIJ create the consensus matrix, 
+from consensus matrix generate the networks
