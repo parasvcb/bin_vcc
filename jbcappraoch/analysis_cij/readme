@@ -1,0 +1,6 @@
+This folder will tease out the general layouts and details of the network methodology and will specfilaly highlight
+1. Distributions and their density maps/histograms of cij values, (6 in one panel).
+2. Number of pairs with cij >=0.6 in all the replicates (6 values in return).
+3. Among them how many were from consensus and how many were distance based (i think i know them) and their fraction from total pairs)
+4. Get a common set of wildtype and mutant and subtract their values from wildtype and display distributions. 
+5. focus on fraction that will make a difference in general (non zero likely)
