@@ -1,0 +1,16 @@
+cp project12may2020/source/wt_r1/productiontraj.dcd WT_series/ready_analysis/WT_r1/
+cp project12may2020/source/wt_r2/productiontraj.dcd WT_series/ready_analysis/WT_r2/
+cp project12may2020/source/wt_r3/productiontraj.dcd WT_series/ready_analysis/WT_r3/
+cp project12may2020/source/wt_r3/ultrasmall.dcd WT_series/ready_analysis/WT_r3/
+cp project12may2020/source/wt_r1/ultrasmall.dcd WT_series/ready_analysis/WT_r1/
+cp project12may2020/source/wt_r2/ultrasmall.dcd WT_series/ready_analysis/WT_r2/
+
+cp project12may2020/source/y321a_r2/ultrasmall.dcd Y321A_series/ready_analysis/Y321A_r2/
+cp project12may2020/source/y321a_r3/ultrasmall.dcd Y321A_series/ready_analysis/Y321A_r3/
+cp project12may2020/source/y321a_r4/ultrasmall.dcd Y321A_series/ready_analysis/Y321A_r4as1/
+cp project12may2020/source/y321a_r4/productiontraj.dcd Y321A_series/ready_analysis/Y321A_r4as1/
+cp project12may2020/source/y321a_r2/productiontraj.dcd Y321A_series/ready_analysis/Y321A_r2/
+cp project12may2020/source/y321a_r3/productiontraj.dcd Y321A_series/ready_analysis/Y321A_r3/
+
+cp project12may2020/source/enswt/productiontraj.dcd WT_series/ready_analysis/combined/
+cp project12may2020/source/ensy321a/productiontraj.dcd Y321A_series/ready_analysis/combined/

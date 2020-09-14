@@ -5,6 +5,7 @@ import re
 import os
 import mdtraj
 import numpy as np
+from collections import Counter
 
 
 def callscript(text, filename, mode='R'):
@@ -21,7 +22,9 @@ def callscript(text, filename, mode='R'):
 # PROCESSING CONTACTS AND MASTERFILE
 #############################
 
-def matrix_returner_single_cuttoff(numpy_has, distcutt, range_cutt, upp=False, low=False):
+def matrix_returner_single_cuttoff(numpy_has_file, distcutt, range_cutt, upp=False, low=False):
+    with open(numpy_has_file, 'rb') as fin:
+        numpy_has = pickle.load(fin)
     # first rep will have 0:10000, seoc nd will have 10000:20000, 20000:30000
     # rangecutt will be less than 1,
     # distcutt should be in angstrom
@@ -35,7 +38,6 @@ def matrix_returner_single_cuttoff(numpy_has, distcutt, range_cutt, upp=False, l
     last = max([i[1] for i in keys])
     mat = np.zeros((last+1, last+1))
     middfrac = ((upp-low)//2)+low
-    count = 0
     for residpair in numpy_has:
         valuesfull = np.where(numpy_has[residpair][low:upp] <= distcutt)
         valuesfhalf = np.where(numpy_has[residpair][low:middfrac] <= distcutt)
@@ -55,7 +57,7 @@ def contacts_computer(has, dcd, pdb, contype=1):
     '''
     residue number will occasonally sgtart from 0, add 135 to them later
     has={
-        (first,second):numpy.array([].dtype='float16')
+        (first,second):np.array([].dtype='float16')
     }
     '''
     print("for dcd %s" % dcd)
@@ -74,13 +76,13 @@ def contacts_computer(has, dcd, pdb, contype=1):
     object0, object1 = con
     if len(has) == 0:
         for i in object1:
-            has[tuple(i)] = numpy.array([], dtype='float16')
+            has[tuple(i)] = np.array([], dtype='float16')
     reslis = object0[0]
     for respairind in range(0, len(reslis)):
         distance_in_frames = object0[:, respairind]
         correspondingresiduepair = tuple(object1[respairind])
-        has[correspondingresiduepair] = numpy.append(
-            has[correspondingresiduepair], numpy.round(distance_in_frames*10, 4))
+        has[correspondingresiduepair] = np.append(
+            has[correspondingresiduepair], np.round(distance_in_frames*10, 4))
     return has
 
 
@@ -115,7 +117,7 @@ def horse(dcd, pdb, outname, contype=1):
         has_mega = contacts_computer(
             has_mega, "%s.tempdcd" % ind, pdb, contype)
         os.remove("%s.tempdcd" % ind)
-    with open(outname+append, "wb") as fin:
+    with open(os.path.join(outname, append), "wb") as fin:
         pickle.dump(has_mega, fin, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -180,30 +182,36 @@ def callcij(dcd, pdb, outadd):
     xyz <- fit.xyz(fixed=pdb$xyz, mobile=dcd,fixed.inds=ca.inds$xyz, mobile.inds=ca.inds$xyz)
     cij<-dccm(xyz[,ca.inds$xyz])
     print("cijdone")
-    write.table(cij, file=paste0("%s","mymatrixcij_CA.txt"),  sep = '\t')
+    write.table(cij, file=file.path("%s","mymatrixcij_CA.txt"),  sep = '\t')
     print ("is")
-    pdf(paste0('%s','dccm_CA.pdf'))
+    pdf(file.path('%s','dccm_CA.pdf'))
     plot(cij,sse=stride(pdb,exefile='stride',resno=TRUE))
     plot(cij)
-    save (cij,file=paste0('%s',"CIJ_CA.ob"))
+    save (cij,file=file.path('%s',"CIJ_CA.ob"))
     dev.off()
     ''' % (dcd, pdb, outadd, outadd, outadd)
     callscript(string, 'tempscript.R')
 
 
 def consensus_matrix(mat1, mat2, mat3, con1, con2, con3, cuttcij, outfile):
+    # mat1, mat2, mat3, con1, con2, con3, cuttcij, consensusFile
+    def tempreturn(val, denom):
+        if val:
+            return round(val/denom, 3)
+        else:
+            return 0
     totalpairs = len(mat1)*len(mat1)
     string = 'Total:%s\n' % (totalpairs)
     combinedmatrix = (abs(mat1)+abs(mat2)+abs(mat3))/3
-    temp1 = np.where(combinedmatrix >= 0.1)
-    temp2 = np.where(combinedmatrix >= 0.2)
-    temp3 = np.where(combinedmatrix >= 0.3)
-    temp4 = np.where(combinedmatrix >= 0.4)
-    temp5 = np.where(combinedmatrix >= 0.5)
-    temp6 = np.where(combinedmatrix >= 0.6)
-    temp7 = np.where(combinedmatrix >= 0.7)
-    temp8 = np.where(combinedmatrix >= 0.8)
-    temp9 = np.where(combinedmatrix >= 0.9)
+    temp1 = len(np.where(combinedmatrix >= 0.1)[0])
+    temp2 = len(np.where(combinedmatrix >= 0.2)[0])
+    temp3 = len(np.where(combinedmatrix >= 0.3)[0])
+    temp4 = len(np.where(combinedmatrix >= 0.4)[0])
+    temp5 = len(np.where(combinedmatrix >= 0.5)[0])
+    temp6 = len(np.where(combinedmatrix >= 0.6)[0])
+    temp7 = len(np.where(combinedmatrix >= 0.7)[0])
+    temp8 = len(np.where(combinedmatrix >= 0.8)[0])
+    temp9 = len(np.where(combinedmatrix >= 0.9)[0])
     string += '''Total greater than 0.1 were: %s (%s)
     Total greater than 0.2 were: %s (%s)
     Total greater than 0.3 were: %s (%s)
@@ -213,14 +221,14 @@ def consensus_matrix(mat1, mat2, mat3, con1, con2, con3, cuttcij, outfile):
     Total greater than 0.7 were: %s (%s)
     Total greater than 0.8 were: %s (%s)
     Total greater than 0.9 were: %s (%s)
-    ''' % (temp1, round(temp1/totalpairs, 3), temp2, round(temp2/totalpairs, 3),
-           temp3, round(temp3/totalpairs,
-                        3), temp4, round(temp4/totalpairs, 3),
-           temp5, round(temp5/totalpairs,
-                        3), temp6, round(temp6/totalpairs, 3),
-           temp7, round(temp7/totalpairs,
-                        3), temp8, round(temp8/totalpairs, 3),
-           temp9, round(temp9/totalpairs, 3))
+    ''' % (temp1, tempreturn(temp1, totalpairs), temp2, tempreturn(temp2, totalpairs),
+           temp3, tempreturn(temp3, totalpairs), temp4, tempreturn(
+               temp4, totalpairs),
+           temp5, tempreturn(temp5, totalpairs), temp6, tempreturn(
+               temp6, totalpairs),
+           temp7, tempreturn(temp7, totalpairs), temp8, tempreturn(
+               temp8, totalpairs),
+           temp9, tempreturn(temp9, totalpairs))
     string += '\nGeneral matrix sparsity analysed\n'
     hascount = {}
     hasvalues = {}
@@ -236,7 +244,7 @@ def consensus_matrix(mat1, mat2, mat3, con1, con2, con3, cuttcij, outfile):
             val1 = mat1[i][j]
             val2 = mat2[i][j]
             val3 = mat3[i][j]
-            tempkey = (i+134, j+134)
+            tempkey = (i+135, j+135)
             cond1 = abs(val1) >= cuttcij and abs(
                 val2) >= cuttcij and abs(val3) >= cuttcij
             cond2 = np.sign(val1) == np.sign(val2) == np.sign(val3)
@@ -268,7 +276,7 @@ def consensus_matrix(mat1, mat2, mat3, con1, con2, con3, cuttcij, outfile):
                 if flag == False:
                     cons_np_cij[i][j] = 0
                 hasvalues[tempkey] = round(cons_np_cij[i][j], 3) if flag else 0
-                tempvalue = 'distanceSatisfied' if flat else 'unqualified'
+                tempvalue = 'distanceSatisfied' if flag else 'unqualified'
                 if tempkey not in hascount:
                     hascount[tempkey] = ''
                 hascount[tempkey] += tempvalue
@@ -285,6 +293,7 @@ def consensus_matrix(mat1, mat2, mat3, con1, con2, con3, cuttcij, outfile):
     ''' % (consensuscount, oppsign, distancequalified, oppsignqualified)
     keys = list(hascount.keys())
     keys.sort()
+    # print('is>>')
     with open(outfile+'_qualifierType.hashtext', 'w') as fout:
         fout.write("res1\tres2\tqualifier\n")
         for i in keys:
@@ -342,7 +351,7 @@ def get_members(netob, outapp):
     df=as_data_frame(%s$community.network,what='both')
     write.table(df$edges,'%s' ,sep = "\t" ,row.names = FALSE, col.names = TRUE, dec=".", quote=FALSE)
     print (summary(%s))
-    ''' % (netob, 'net', output+".edges", 'net')
+    ''' % (netob, 'net', outapp+".edges", 'net')
     res = callscript(string, 'temp.R')
     # print(res)
     flag = True if re.search(r'id\s+size\s+members', res) else False
@@ -369,16 +378,17 @@ def get_members(netob, outapp):
             else:
                 templis += [int(j)]
         has_members[com] = templis
+    # print(has_members)
     keys = list(has_members.keys())
     keys.sort()
     with open(outapp+".vmd_resno", "w") as fin:
         for i in keys:
-            if len(has_members[i]) > 1:
+            if len(has_members[i]):
                 fin.write("%s_com %s_members\nresid %s\n" % (i, len(has_members[i]), " ".join(
                     map(str, [k+134 for k in has_members[i]]))))
         fin.write("\n\npythonlistformat")
         for i in keys:
-            if len(has_members[i]) > 1:
+            if len(has_members[i]):
                 fin.write("%s_com=[%s]\n" % (i, ",".join(
                     map(str, [k+134 for k in has_members[i]]))))
     return has_members
@@ -386,11 +396,17 @@ def get_members(netob, outapp):
 # PARSETHROUGH R (GENERAL)
 
 
-def quickRparse(netob, outfile):
+def quickRparse(netob, cij_rep_any, cmapread, outfile):
     stringtype1 = '''
     library(bio3d)
     library(igraph)
     load('%s')
+    load('%s')
+    cmapread=read.table(file='%s',sep=",")
+    cmapread=as.matrix(sapply(cmapread, as.numeric))
+    rownames(cmapread)<-cij[,0]
+    colnames(cmapread)<-cij[0,]
+    cij=cmapread
     node.num <- max(net$communities$membership)
     inds <- pairwise(node.num)
     for(i in 1:nrow(inds)) {
@@ -400,7 +416,7 @@ def quickRparse(netob, outfile):
                 submatrix <- net$cij[comms.1.inds, comms.2.inds]
                 if (sum(colSums(submatrix != 0))>0) {
                     nonzeroindex=which(submatrix!=0, arr.ind = T)
-                    print (paste("PARENT","-->ForCompair:",inds[i,1],inds[i,2],"members:",sum(colSums(submatrix != 0)),sep=":\t")
+                    print (paste("PARENT","-->ForCompair:",inds[i,1],inds[i,2],"members:",sum(colSums(submatrix != 0))),sep=":\\t")
                     respaircount=1
                     df=as.data.frame(nonzeroindex)
                     #break
@@ -410,16 +426,16 @@ def quickRparse(netob, outfile):
                         resind2=comms.2.inds[df[j,'col']]
                         #resinds are cij indexes, for residues add 134 to them 
                         cijval=cij[resind1,resind2]
-                        print (paste("CHILD","-->ForCompair: ",inds[i,1],inds[i,2]," and residpair: ",resind1+134,resind2+134,"cij value was:",cijval),sep=":\t")
+                        print (paste("CHILD","-->ForCompair: ",inds[i,1],inds[i,2]," and residpair: ",resind1+134,resind2+134,"cij value was:",cijval),sep=":\\t")
                     }
             }
         }
         else{
-            print (paste("EMPTY","Compair:",inds[i,1],inds[i,2]),sep=":\t")
+            print (paste("EMPTY","Compair:",inds[i,1],inds[i,2]),sep=":\\t")
         }
 
     }
-    ''' % (netob)
+    ''' % (netob, cij_rep_any, cmapread)
     res = callscript(stringtype1, 'temp.R')
     with open(outfile, 'w') as fout:
         fout.write("%s" % (res))
@@ -427,8 +443,8 @@ def quickRparse(netob, outfile):
 
 
 def immediateFetch(key, hascom, cijhas):
-    members1 = has[int(key[0])]
-    members2 = has[int(key[1])]
+    members1 = hascom[int(key[0])]
+    members2 = hascom[int(key[1])]
     value = []
     for i in members1:
         for j in members2:
@@ -440,7 +456,11 @@ def immediateFetch(key, hascom, cijhas):
     return value
 
 
-def processfinaldata(deta, cijfile, hasmembership):
+def processfinaldata(deta, cijfile, hasmembership, qualifierFile, finalFile):
+    # print(cijfile)
+    deta = re.sub(r'"', '', deta)
+    deta = [i for i in deta.split("\n")if len(i) > 0]
+    # print(deta[:10])
     with open(cijfile) as fin:
         dat = [i for i in fin.read().split("\n")[1:] if len(i) > 0]
     hascij = {}
@@ -456,24 +476,57 @@ def processfinaldata(deta, cijfile, hasmembership):
     tempdata = []
     key = []
     for record in deta:
-        if len(i) > 0:
+        record = re.sub(r'^\[\d+\]\s+', '', record)
+        # print(record)
+        if len(record) > 0:
+            # print(record)
             ele = record.split()
             if ele[0] == 'PARENT':
                 if tempdata and key:
                     hascommunities[key] = tempdata
                     tempdata = []
-                key = (ele[2], ele[3])
+                key = (int(ele[2]), int(ele[3]))
             if ele[0] == 'CHILD':
-                tempdata += [(ele[5], ele[6], ele[8])]
+                tempdata += [(ele[6], ele[7], ele[11])]
             if ele[0] == 'EMPTY':
                 if tempdata and key:
                     hascommunities[key] = tempdata
                     tempdata = []
-                key = (ele[2], ele[3])
-                tempdata = immediateFetch(key, hasmembership, cijhas)
+                key = (int(ele[2]), int(ele[3]))
+                tempdata = immediateFetch(key, hasmembership, hascij)
+                #print(record, tempdata)
     if tempdata and key:
         hascommunities[key] = tempdata
         tempdata = []
+    keys = list(hascommunities.keys())
+    keys.sort()
+    hasqualifier = {}
+    with open(qualifierFile) as fin:
+        dat = [i for i in fin.read().split('\n')[1:] if len(i) > 1]
+        for i in dat:
+            ele = i.split()
+            if ele[2] != 'unqualified':
+                key = (ele[0], ele[1])
+                hasqualifier[key] = ele[2]
+    with open(finalFile, 'w') as fout:
+        strings = []
+        for i in keys:
+            vals = [[abs(float(k[2])), (k[0], k[1])]
+                    for k in hascommunities[i]]
+            allqualifiers = [hasqualifier[k[1]] for k in vals]
+            allvals = [k[0] for k in vals]
+            vals.sort()
+            tempstr = '''Com pair: %s and %s,TotalInterComEdges:%s, totalCorrelationVal:%s, 
+            meanval:%s, maxval:%s (residpair:%s, qualifier:%s)
+            For all residues %s were \n''' % (i[0], i[1], len(allvals), sum(allvals), np.mean(allvals), vals[-1][0], vals[-1][1], hasqualifier[vals[-1][1]], Counter(allqualifiers))
+            fout.write(tempstr)
+            strings += [tempstr]
+            for j in hascommunities[i]:
+                fout.write("\tresiduePair: %s and %s\tcijval:%s\n" %
+                           (int(j[0]), int(j[1]), j[2]))
+            fout.write("\n")
+        stringsData = "\n\n".join(strings)
+        fout.write('%s' % (stringsData))
     return
 # PARSE R OUTPUT WITH PYTHON TO GET FINAL FILE
 
@@ -485,13 +538,13 @@ def generalAnalysis(dcd, pdb, outapp):
     library(bio3d)
     library(igraph)
     dcd <- read.dcd('%s')
-    pdb <- read.pdb('%s)
+    pdb <- read.pdb('%s')
     ca.inds <- atom.select(pdb, elety="CA")
     xyz <- fit.xyz(fixed=pdb$xyz, mobile=dcd,fixed.inds=ca.inds$xyz, mobile.inds=ca.inds$xyz)
     rf <- rmsf(xyz[,ca.inds$xyz])
     rd <- rmsd(xyz[1,ca.inds$xyz], xyz[,ca.inds$xyz])
     rdfrompdb=rmsd(pdb$xyz[1,ca.inds$xyz], xyz[,ca.inds$xyz])
-    df = data.frame(rmsf=rf,resid=c(136:716,136:716),grp='whole_protein',protgrp='_all')
+    df = data.frame(rmsf=rf,resid=c(135:716),grp='whole_protein',protgrp='_all')
     dfr = data.frame(rmsd=rd,frames=c(1: dim(dcd)[1]),grp='whole_protein',protgrp='_all')
     dfrfrompdb = data.frame(rmsd=rdfrompdb,frames=c(1: dim(dcd)[1]),grp='whole_protein',protgrp='_all')
     write.table(df,paste0('%s',"_rmsf.txt") ,sep = "\t" ,row.names = FALSE, col.names = TRUE, dec=".", quote=FALSE)

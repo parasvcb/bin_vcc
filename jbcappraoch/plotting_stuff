@@ -1,0 +1,182 @@
+library(ggplot2)
+library(bio3d)
+pdb=read.pdb("WT_series/ready_analysis/WT_r1/coordmini.pdb")
+wtrsmf=read.csv('WT_series/output_process/combined_rmsf.txt',sep='\t')
+mtrsmf=read.csv('Y321A_series/output_process/combined_rmsf.txt',sep='\t')
+rermsf=read.csv('Y321F_series/output_process/combined_rmsf.txt',sep='\t')
+bfac=read.csv("bfactor_xez.csv")
+bfac$norm=(bfac$rmsf*3) / (8*pi**2)
+
+pdf('plotting/RMSF_wt_y321a_y321F_all.pdf',width = 14, height = 5)
+plot.bio3d(mtrsmf$rmsf,resno=pdb,sse=stride(pdb,exefile='stride',resno=TRUE), ylab="Ang", typ='l', col=4, lty=1,lwd=1, sse.min.length=0,  top=FALSE)
+lines(bfac$norm, typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf, typ="l", col=2)
+lines(rermsf$rmsf, typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,2,4,3),lty=c(1,1,1,1))
+dev.off()
+
+cytosthx=c(19,215,318)
+cytoedhx=c(22,218,319)
+headsthx=c(320)
+headedhx=c(321)
+protsthx=c(19,215,318)
+protedhx=c(22,218,321)
+
+#sse rect sheet
+cytostsh=c(6,44,69,93,105,130,145,176,191,202,250,263,290,303)
+cytoedsh=c(16,56,76,97,125,136,157,189,199,209,256,285,297,314)
+prismstsh=c(451,461,472,481,498,507,522,536,545,561,573)
+prismedsh=c(456,466,477,485,503,517,531,540,554,568,580)
+prestemstsh=c(145,176)
+prestemedsh=c(157,189)
+headstsh=c(325,336,346,359,397,405,414,424,438)
+headedsh=c(330,340,350,362,400,408,418,427,442)
+protstsh=c(6,44,69,93,105,130,145,176,191,202,250,263,290,303,325,336,346,359,397,405,414,424,438,451,461,472,481,498,507,522,536,545,561,573)
+protedsh=c(16,56,76,97,125,136,157,189,199,209,256,285,297,314,330,340,350,362,400,408,418,427,442,456,466,477,485,503,517,531,540,554,568,580)
+
+pdf('plotting/RMSF_wt_y321a_y321F_allprotein_135to716.pdf',width = 14)
+plot.bio3d(mtrsmf$rmsf, axes=F, ylab="Ang", col=2,typ='l',lwd=1)
+lines(bfac$norm, typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf, typ="l", col=4)
+lines(rermsf$rmsf, typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,4,2,3),lty=c(1,1,1,1))
+axis(2,pos=0)
+axis(1,pos=0,at=seq(0,600,50),labels=seq(135,750,50))
+rect(protstsh+1,rep(0,each=length(protstsh)),protedsh+1,rep(0.1,each=length(protedsh)),col="gray80",border=F)
+rect(protsthx+1,rep(0,each=length(protsthx)),protedhx+1,rep(0.1,each=length(protedhx)),col="gray20",border=F)
+rect(c(1,191),rep(5,each=191-1+1),c(142,320),rep(5.1,each=320-142+1),col="red",border=F)
+rect(c(143),rep(5,each=47),c(190),rep(5.1,each=47),col="yellow",border=F)
+rect(c(321),rep(5,each=127),c(447),rep(5.1,each=127),col="blue",border=F)
+rect(c(448),rep(5,each=135),c(582),rep(5.1,each=135),col="green",border=F)
+dev.off()
+
+################----->>>>modified approach
+pdf('plotting/RMSF_wt_y321a_y321F_head_455to581.pdf',width = 14)
+plot.bio3d(mtrsmf$rmsf[321:447], axes=F, ylab="Ang", col=2,typ='l',lwd=1, ylim=c(0,5.1))
+lines(bfac$norm[321:447], typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf[321:447], typ="l", col=4)
+lines(rermsf$rmsf[321:447], typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,4,2,3),lty=c(1,1,1,1))
+axis(2,pos=0)
+axis(1,pos=0,at=seq(0,150,25),labels=seq(455,625,25))
+rect(headstsh-319,rep(0,each=length(headstsh)),headedsh-319,rep(0.1,each=length(headedsh)),col="gray80",border=F)
+rect(headsthx-319,rep(0,each=length(headsthx)),headedhx-319,rep(0.1,each=length(headedhx)),col="gray20",border=F)
+rect(c(1),rep(5,each=127),c(127),rep(5.1,each=127),col="blue",border=F)
+dev.off()
+
+pdf('plotting/RMSF_wt_y321a_y321F_prism_582to716.pdf',width = 14)
+plot.bio3d(mtrsmf$rmsf[448:582], axes=F, ylab="Ang", col=2,typ='l',lwd=1, ylim=c(0,5.1))
+lines(bfac$norm[448:582], typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf[448:582], typ="l", col=4)
+lines(rermsf$rmsf[448:582], typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,4,2,3),lty=c(1,1,1,1))
+axis(2,pos=0)
+axis(1,pos=0,at=seq(0,150,25),labels=seq(582,750,25))
+rect(prismstsh-446,rep(0,each=length(headstsh)),prismedsh-446,rep(0.1,each=length(prismedsh)),col="gray80",border=F)
+rect(c(1),rep(5,each=135),c(135),rep(5.1,each=135),col="green",border=F)
+dev.off()
+
+pdf('plotting/RMSF_wt_y321a_prestem_277_324.pdf',width = 14)
+plot.bio3d(mtrsmf$rmsf[143:190], axes=F, ylab="Ang", col=2,typ='l',lwd=1, ylim=c(0,5.1))
+lines(bfac$norm[143:190], typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf[143:190], typ="l", col=4)
+lines(rermsf$rmsf[143:190], typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,4,2,3),lty=c(1,1,1,1))
+axis(2,pos=0)
+axis(1,pos=0,at=seq(0,60,10),labels=seq(277,340,10))
+rect(prestemstsh-141,rep(0,each=length(headstsh)),prestemedsh-141,rep(0.1,each=length(prestemedsh)),col="gray80",border=F)
+rect(c(1),rep(5,each=47),c(47),rep(5.1,each=47),col="yellow",border=F)
+dev.off()
+
+#prism start will be 447, to be 0 and 446 to be 1
+pdf('plotting/RMSF_wt_y321a_y321F_cytolysinwithprestem_135to455.pdf',width = 14)
+plot.bio3d(mtrsmf$rmsf[1:320], axes=F, ylab="Ang", col=2,typ='l',lwd=1, ylim=c(0,5.1))
+lines(bfac$norm[1:320], typ="l" ,col=1,lwd=0.2)
+lines(wtrsmf$rmsf[1:320], typ="l", col=4)
+lines(rermsf$rmsf[1:320], typ="l", col=3)
+legend("topright",c("bfactor", "WT","Y321A","Y321F"),col=c(1,4,2,3),lty=c(1,1,1,1))
+axis(2,pos=0)
+axis(1,pos=0,at=seq(0,325,25),labels=seq(135,475,25))
+rect(cytostsh+1,rep(0,each=length(cytostsh)),cytoedsh+1,rep(0.1,each=length(cytoedsh)),col="gray80",border=F)
+rect(cytosthx+1,rep(0,each=length(cytosthx)),cytoedhx+1,rep(0.1,each=length(cytoedhx)),col="gray20",border=F)
+#cytohead starts from 0, plotting from 1, do +1
+rect(c(1,191),rep(5,each=191-1+1),c(142,320),rep(5.1,each=320-142+1),col="red",border=F)
+rect(c(143),rep(5,each=47),c(190),rep(5.1,each=47),col="yellow",border=F)
+dev.off()
+#dom coods should start form 1, 
+
+
+##########################################################################################
+
+dfrmwt1=read.csv('WT_series/output_process/WT_r1_rmsd_frompdb.txt',sep='\t')
+dfrmwt1$grp='WT_r1'
+dfrmwt2=read.csv('WT_series/output_process/WT_r2_rmsd_frompdb.txt',sep='\t')
+dfrmwt2$grp='WT_r2'
+dfrmwt3=read.csv('WT_series/output_process/WT_r3_rmsd_frompdb.txt',sep='\t')
+dfrmwt3$grp='WT_r3'
+dfrmswt<-rbind(dfrmwt1,dfrmwt2,dfrmwt3)
+dfrmswt$protgrp="WT"
+
+dfrmy321a1=read.csv('Y321A_series/output_process/Y321A_r4as1_rmsd_frompdb.txt',sep='\t')
+dfrmy321a1$grp='Y321A_r1'
+dfrmy321a2=read.csv('Y321A_series/output_process/Y321A_r2_rmsd_frompdb.txt',sep='\t')
+dfrmy321a2$grp='Y321A_r2'
+dfrmy321a3=read.csv('Y321A_series/output_process/Y321A_r3_rmsd_frompdb.txt',sep='\t')
+dfrmy321a3$grp='Y321A_r3'
+dfrmsy321a<-rbind(dfrmy321a1,dfrmy321a2,dfrmy321a3)
+dfrmsy321a$protgrp="Y321A"
+
+
+dfrmY321F1=read.csv('Y321F_series/output_process/Y321F_r1_rmsd_frompdb.txt',sep='\t')
+dfrmY321F1$grp='Y321F_r1'
+dfrmY321F2=read.csv('Y321F_series/output_process/Y321F_r2_rmsd_frompdb.txt',sep='\t')
+dfrmY321F2$grp='Y321F_r2'
+dfrmY321F3=read.csv('Y321F_series/output_process/Y321F_r3_rmsd_frompdb.txt',sep='\t')
+dfrmY321F3$grp='Y321F_r3'
+dfrmsY321F<-rbind(dfrmY321F1,dfrmY321F2,dfrmY321F3)
+dfrmsY321F$protgrp="Y321F"
+
+
+gg <- ggplot()
+gg <- gg + geom_line(data=dfrmswt, aes(x=frames,y=rmsd,color=grp), size=0.6,alpha=0.8)
+gg <- gg + labs(y="RMSD (A)", x="TS in frames (1frame=10ps)") + ylim(0,4)
+gg <- gg + theme (legend.text=element_text(size=15),strip.text = element_text(size = 15),axis.text.y = element_text( hjust = 1, size = 12),axis.text.x = element_text( hjust = 1, size = 12, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=10)))
+strip.text = element_text(size = 12)
+ggsave(filename = "plotting/WT_rmsd_ensemble.pdf", gg, width = 12, height = 5)
+
+gg <- ggplot()
+gg <- gg + geom_line(data=dfrmsy321a, aes(x=frames,y=rmsd,color=grp), size=0.6,alpha=0.8)
+gg <- gg + labs(y="RMSD (A)", x="TS in frames (1frame=10ps)") + ylim(0,4)
+gg <- gg + theme (legend.text=element_text(size=15),strip.text = element_text(size = 15),axis.text.y = element_text( hjust = 1, size = 12),axis.text.x = element_text( hjust = 1, size = 12, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=10)))
+strip.text = element_text(size = 12)
+ggsave(filename = "plotting/Y321A_rmsd_ensemble.pdf", gg, width = 12, height = 5)
+
+gg <- ggplot()
+gg <- gg + geom_line(data=dfrmsY321F, aes(x=frames,y=rmsd,color=grp), size=0.6,alpha=0.8)
+gg <- gg + labs(y="RMSD (A)", x="TS in frames (1frame=10ps)") + ylim(0,4)
+gg <- gg + theme (legend.text=element_text(size=15),strip.text = element_text(size = 15),axis.text.y = element_text( hjust = 1, size = 12),axis.text.x = element_text( hjust = 1, size = 12, angle = 45), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+gg <- gg + guides(colour = guide_legend(override.aes = list(size=10)))
+strip.text = element_text(size = 12)
+ggsave(filename = "plotting/Y321F_rmsd_ensemble.pdf", gg, width = 12, height = 5)
+
+library(bio3d)
+colors=c("blue","red","gray","orange","yellow","tan","white","green","pink","cyan","black")
+pdb=read.pdb("Y321F_series/ready_analysis/Y321F_r1/renumber_raw.pdb")
+load ("Y321F_series/output_process_renumberpdb_aligned/jbcapproach/net_max_mod.ob")
+pdf("plotting/Y321F_max_modcircles.pdf")
+plot.cna(net, pdb = pdb, weights=NULL, vertex.size=summary(net)$tbl$size/2, layout=NULL, col=NULL, full=FALSE, scale=TRUE)
+dev.off()
+
+pdb=read.pdb("Y321A_series/ready_analysis/Y321A_r2/renumber_raw.pdb")
+load ("Y321A_series/output_process_renumberpdb_aligned/jbcapproach/net_max_mod.ob")
+pdf("plotting/Y321A_max_modcircles.pdf")
+plot.cna(net, pdb = pdb, weights=NULL, vertex.size=summary(net)$tbl$size/2, layout=NULL, col=NULL, full=FALSE, scale=TRUE)
+dev.off()
+
+pdb=read.pdb("WT_series/ready_analysis/WT_r1/renumber_raw.pdb")
+load ("WT_series/output_process_renumberpdb_aligned/jbcapproach/net_max_mod.ob")
+pdf("plotting/WT_max_modcircles.pdf")
+plot.cna(net, pdb = pdb, weights=NULL, vertex.size=summary(net)$tbl$size/2, layout=NULL, col=NULL, full=FALSE, scale=TRUE)
+dev.off()
