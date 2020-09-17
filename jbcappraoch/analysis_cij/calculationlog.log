@@ -5,6 +5,7 @@ for group Y321A_r1, >=0.6 values were:6449 (0.057 freq from values gretar than 0
 for group Y321A_r2, >=0.6 values were:6252 (0.052 freq from values gretar than 0.1 (120488 pairs) and 0.037 (includin all pairs, which were 169071))
 for group Y321A_r3, >=0.6 values were:5652 (0.051 freq from values gretar than 0.1 (110337 pairs) and 0.033 (includin all pairs, which were 169071))
 WTcons
+169071
 in mattohas()
 Total greater than 0.1 were: 4960 (0.029)
     Total greater than 0.2 were: 4960 (0.029)
@@ -17,6 +18,7 @@ Total greater than 0.1 were: 4960 (0.029)
     Total greater than 0.9 were: 191 (0.001)
     
 Y321Acons
+169071
 in mattohas()
 Total greater than 0.1 were: 5294 (0.031)
     Total greater than 0.2 were: 5294 (0.031)

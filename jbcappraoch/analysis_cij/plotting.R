@@ -13,16 +13,17 @@ gg <- gg + geom_density(aes(x=values,..scaled..),size=0.5)
 gg <- gg + scale_x_continuous('cij value', breaks = seq(-1,1, by = .1))
 gg <- gg + scale_y_continuous('Frequency', breaks = seq(0,1, by = .2))
 gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 10, angle = 45),axis.text.y = element_text( hjust = 1, size = 10), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
-ggsave(filename = 'test2.png')
+ggsave(filename = '../../../../plotting/FigR2.pdf')
 
 print (head(df2))
+
 gg <- ggplot() 
-gg <- gg + geom_density(data=df2,aes(x=cij,..scaled..,color=group),size=0.5)
-gg <- gg + scale_color_manual(values=c("blue","purple","lightblue","red","darkorange","maroon"))
-gg <- gg + scale_x_continuous('cij value', breaks = seq(-1,1, by = .1))
+gg <- gg + geom_density(data=df2,aes(x=cij,..scaled..,color=group),size=0.5) + geom_vline(xintercept=0.6, color='black',size=1)
+gg <- gg + scale_color_manual(values=c("blue","cyan","skyblue","red","darkorange","maroon"))
+gg <- gg + scale_x_continuous('cij value', breaks = seq(-0.2,1, by = .1))
 gg <- gg + scale_y_continuous('Frequency', breaks = seq(0,1, by = .2))
 gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 10, angle = 45),axis.text.y = element_text( hjust = 1, size = 10), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
-ggsave(filename = 'test3.png')
+ggsave(filename = '../../../../plotting/FigR1.pdf')
 
    
 

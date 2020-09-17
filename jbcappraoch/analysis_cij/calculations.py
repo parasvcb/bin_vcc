@@ -61,6 +61,7 @@ def mattohas(mat):
                 has[tuple(key)] = abs(mat[i, j])
     values = np.asarray(list(has.values()))
     totalpairs = len(values)
+    print(totalpairs)
     valgrt1 = len(np.where(values >= 0.1)[0])
     valgrt2 = len(np.where(values >= 0.2)[0])
     valgrt3 = len(np.where(values >= 0.3)[0])
@@ -147,3 +148,7 @@ for ind, val in enumerate(bins):
 
 # for 4th read the consensus cij matrix and compare the non zero values.
 # add the to collective hash and plot them,
+# >>> 4960/((109049+111276+112715)/3)*100
+# 4.467931779966371
+# >>> 5294/((113891+120488+110337)/3)
+# 0.04607270912867404
