@@ -25,6 +25,35 @@ gg <- gg + scale_y_continuous('Frequency', breaks = seq(0,1, by = .2))
 gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 10, angle = 45),axis.text.y = element_text( hjust = 1, size = 10), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
 ggsave(filename = '../../../../plotting/FigR1.pdf')
 
+
+#follwing is the new addition
+library(ggplot2)
+
+res3='../../../../plotting/raw_distribution_pythonpseudoHist_with0bin.csv'
+df3=read.csv(res3)
+gg <- ggplot() 
+gg <- gg + geom_line(data=df3,aes(x=bins,y=frequency, color=reptype),size=0.5) + geom_vline(xintercept=0.6, color='black',size=1)
+gg <- gg + geom_point(data=df3,aes(x=bins,y=frequency, color=reptype),size=0.5)
+gg <- gg + scale_color_manual(values=c("blue","cyan","skyblue","red","darkorange","maroon"))
+gg <- gg + scale_x_continuous('cij value', breaks = seq(-0.2,1, by = .1))
+gg <- gg + scale_y_continuous('Frequency', breaks = seq(0,1, by = .2))
+gg <- gg + xlab('Bins')
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 10, angle = 45),axis.text.y = element_text( hjust = 1, size = 10), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = '../../../../plotting/FigR1_with0bin.pdf')
+
+res3='../../../../plotting/raw_distribution_pythonpseudoHist_without0bin.csv'
+df3=read.csv(res3)
+gg <- ggplot() 
+gg <- gg + geom_line(data=df3,aes(x=bins,y=frequency, color=reptype),size=0.5) + geom_vline(xintercept=0.6, color='black',size=1)
+gg <- gg + geom_point(data=df3,aes(x=bins,y=frequency, color=reptype),size=0.5)
+gg <- gg + scale_color_manual(values=c("blue","cyan","skyblue","red","darkorange","maroon"))
+gg <- gg + scale_x_continuous('cij value', breaks = seq(-0.2,1, by = .1))
+gg <- gg + scale_y_continuous('Frequency', breaks = seq(0,1, by = .2))
+gg <- gg + xlab('Bins')
+gg <- gg + theme (axis.text.x = element_text( hjust = 1, size = 10, angle = 45),axis.text.y = element_text( hjust = 1, size = 10), legend.position="top", panel.background = element_rect(fill = "white", colour = "grey50"),panel.grid.major = element_line(colour = "grey90"),panel.grid.minor = element_line(colour = "grey95",size = 0.25))
+ggsave(filename = '../../../../plotting/FigR1_without0bin.pdf')
+
+
    
 
 # gg <- ggplot(data=df1,aes(x=hbx,y=mean,fill=hbtype))

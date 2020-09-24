@@ -29,3 +29,8 @@ this was wt - mut,
 i think red is negative and blue is positive
 ray 2400, 2400
 png fileName, dpi=300
+
+
+update24sep:
+in plotting.R raw_distribution has been made to be density,
+converting that to python forced barplot equivalent to pseudo histogram, in pseudohist.py
